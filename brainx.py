@@ -1,24 +1,29 @@
-﻿#!/usr/bin/env python3
+﻿#!/opt/python3.3/bin/python3.3
 # -*- coding: utf-8 -*-
 
 
 class BrainFuck:
     """Interpretr jazyka brainfuck."""
-    
+
     def __init__(self, data, memory=b'\x00', memory_pointer=0):
         """Inicializace interpretru brainfucku."""
-        
+
+
         # data programu
         self.data = data
-        
+
+
         # inicializace proměnných
         self.memory = memory
         self.memory_pointer = memory_pointer
-        
+
+
+
         # DEBUG a testy
         # a) paměť výstupu
         self.output = ''
-    
+
+
     #
     # pro potřeby testů
     #
@@ -29,10 +34,12 @@ class BrainFuck:
 
 class BrainLoller():
     """Třída pro zpracování jazyka brainloller."""
-    
+
+
     def __init__(self, filename):
         """Inicializace interpretru brainlolleru."""
-        
+
+
         # self.data obsahuje rozkódovaný zdrojový kód brainfucku..
         self.data = ''
         # ..který pak předhodíme interpretru
@@ -41,10 +48,12 @@ class BrainLoller():
 
 class BrainCopter():
     """Třída pro zpracování jazyka braincopter."""
-    
+
+
     def __init__(self, filename):
         """Inicializace interpretru braincopteru."""
-        
+
+
         # self.data obsahuje rozkódovaný zdrojový kód brainfucku..
         self.data = ''
         # ..který pak předhodíme interpretru
