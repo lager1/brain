@@ -7,13 +7,14 @@
 # ------------------------------------------------------------------------------
 import os
 import sys
-
+import struct
 
 # ------------------------------------------------------------------------------
 class BrainFuck:
   """Interpretr jazyka brainfuck."""
 
-  def __init__(self, data, memory = b'\x00', memory_pointer = 0):
+  #def __init__(self, data, memory = b'\x00', memory_pointer = 0):
+  def __init__(self, data, memory = bytearray(b'\x00'), memory_pointer = 0):
     """Inicializace interpretru brainfucku."""
 
     # data programu
@@ -63,20 +64,34 @@ class BrainFuck:
     for i in self.data:
       if i == '>':
         self.memory_pointer += 1
-        # pridat jeste rozsireni pameti
+        self.memory.append(0)   # rozsireni pameti
 
       elif i == '<':
         self.memory_pointer -= 1
-        # pridat jeste rozsireni pameti
 
       elif i == '+':
-        self.memory += 1
+        self.memory[self.memory_pointer] += 1
 
-      elif i == '':
-        self.memory -= 1
+      elif i == '-':
+        self.memory[self.memory_pointer] -= 1
 
       elif i == '.':
-        print(self.memory)
+        #self.memory = b"abcde".decode("utf-8")
+
+        #self.memory = self.memory.decode("utf-8")
+        #self.oputput = self.memory.decode("utf-8")[self.memory_pointer]
+        #self.oputput = self.memory[self.memory_pointer]
+        #self.oputput = self.memory.decode("utf-8")
+
+
+        out = self.memory.decode("utf-8")[self.memory_pointer]
+
+
+        #print(self.memory[self.memory_pointer])
+        #print(self.output.decode("utf-8"))
+        #print(self.output[self.memory_pointer])
+        #print(self.output)
+        print(out, end="")
 
       elif i == ',':
         pass
