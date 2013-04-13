@@ -9,16 +9,11 @@
     ------------------------------------------------------------------------------
 '''
 
-
-
 # ------------------------------------------------------------------------------
 # import knihoven
 # ------------------------------------------------------------------------------
-import os
-import sys
 import argparse
 import brainx
-
 
 # ------------------------------------------------------------------------------
 # definice hlavni funkce
@@ -31,21 +26,16 @@ def main():
   parser.add_argument('file', help='Soubor ke zpracování.')
 
   args = parser.parse_args()
-  print(args)
 
-  if os.path.isfile(args.file):     # soubor
-    print("soubor existuje")
+  if args.file != "":
+    if args.braincopter == True:
+      brainx.BrainCopter(args.file)
 
-  elif args.file == "":
-    sys.exit("zadany soubor \"" + args.file + "\" neexistuje")
+    elif args.braincopter == True:
+      brainx.BrainCopter(args.file)
 
-  else:                             # kod primo na radce
-    pass
-
-
-
-
-
+    else:
+      brainx.BrainFuck(args.file)
 
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":
