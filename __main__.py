@@ -1,45 +1,54 @@
-#!/usr/bin/env python3
+#!/opt/python3.3/bin/python3.3
 # encoding: utf-8
 
 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
-#
-# semestralni prace z predmetu BI-PYT, FIT CVUT, letni semestr 2013
-# 
-# ------------------------------------------------------------------------------
-# ------------------------------------------------------------------------------
+''' ------------------------------------------------------------------------------
+
+    semestralni prace z predmetu BI-PYT, FIT CVUT, letni semestr 2013
+
+    ------------------------------------------------------------------------------
+'''
 
 
 
 # ------------------------------------------------------------------------------
 # import knihoven
 # ------------------------------------------------------------------------------
-import os.path
+import os
 import sys
-
+import argparse
+import brainx
 
 
 # ------------------------------------------------------------------------------
 # definice hlavni funkce
 # ------------------------------------------------------------------------------
 def main():
-  if len(sys.argv) < 2:
-    print("pouziti ")
-    return 1
+  parser = argparse.ArgumentParser(description='Interpretr jazyka brainfuck.')
+  parser.add_argument('--version', action='version', version='0.1', help='show program\'s version number and exit')
+  parser.add_argument('-l', '--brainloller', action='store_true', help='Jde o program v jazyce brainloller.')
+  parser.add_argument('-c', '--braincopter', action='store_true', help='Jde o program v jazyce braincopter.')
+  parser.add_argument('file', help='Soubor ke zpracování.')
+
+  args = parser.parse_args()
+  print(args)
+
+  if os.path.isfile(args.file):     # soubor
+    print("soubor existuje")
+
+  elif args.file == "":
+    sys.exit("zadany soubor \"" + args.file + "\" neexistuje")
+
+  else:                             # kod primo na radce
+    pass
 
 
-  print("prvni zadany argument " + sys.argv[1])
-
-  if os.path.isfile(sys.argv[1]):
-    print("je soubor")
-  else:
-    print("neni soubor")
 
 
 
 
 # ------------------------------------------------------------------------------
-main()
+if __name__ == "__main__":
+  main()
 
 
