@@ -63,8 +63,6 @@ class BrainFuck:
     elif not os.path.isfile(self.data):
       sys.exit("zadany soubor \"" + self.data + "\" neni soubor")
 # ------------------------------------------------------------------------------
-  #def loop(self, start = 0, end = len(self.data)):
-  #def loop(self, start, end, pointer):
   def loop(self, start, end):
     """Vlastni smycka pro zpracovani kodu
        promenne:
@@ -73,21 +71,8 @@ class BrainFuck:
          pointer - pametove misto, ktere udava zda se ma smycka jeste provadet
     """
 
-
-   # for (i, j) in enumerate(self.data):
-   #   print(i, j)
-
-
-    #print("-----------------------------------")
-    #print("start " + str(start))
-    #print("end " + str(end))
-
     i = start
     while i < end:
-
-    #  print(i, self.data[i])
-    #  print("ukazatel " + str(self.memory_pointer))
-    #  print("pamet " + str(self.memory[self.memory_pointer]))
 
       if self.data[i] == '>':
         self.memory_pointer += 1
@@ -116,21 +101,16 @@ class BrainFuck:
           if l == ']':
             self.loop(i + 1, k + 1)   # jdeme na znak za zacatkem cyklu, jinak se zacyklime, chceme ukoncovaci zavorku
             break
-    #    print("k je " + str(k))
+
         i = k + 1                # skok za konec smycky
         continue
 
       elif self.data[i] == ']':
 
         if self.memory[self.memory_pointer] == 0:
-    #      print("pamet je 0, koncime cyklus")
           return
 
         else:
-        #  print("pamet neni 0")
-        #  print("ukazatel nastaven " + str(self.memory_pointer))
-        #  print("pamet " + str(self.memory[self.memory_pointer]))
-
           i = start                        # skok na zacatek cyklu
           continue
 
