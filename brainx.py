@@ -30,7 +30,11 @@ class BrainFuck:
     self.output = ''
 
     self.dataCheck()
-    self.loop()
+    #self.loop(0, len(self.data))
+    self.loop(0, len(self.data) - 1)
+
+  # pridat funkci pro ocisteni kodu od komentaru ?
+  # pridat odchyceni vyjimky bytearray index out of range ?
 
   #
   # pro potřeby testů
@@ -58,55 +62,82 @@ class BrainFuck:
     elif not os.path.isfile(self.data):
       sys.exit("zadany soubor \"" + self.data + "\" neni soubor")
 # ------------------------------------------------------------------------------
-  def loop(self):
-    """Vlastni smycka pro zpracovani kodu"""
+  #def loop(self, start = 0, end = len(self.data)):
+  #def loop(self, start, end, pointer):
+  def loop(self, start, end):
+    """Vlastni smycka pro zpracovani kodu
+       promenne:
+         start   - kde smycka zacina
+         end     - kde smycka konci
+         pointer - pametove misto, ktere udava zda se ma smycka jeste provadet
+    """
 
-    for i in self.data:
-      if i == '>':
+
+   # for (i, j) in enumerate(self.data):
+   #   print(i, j)
+
+
+    #print("-----------------------------------")
+    #print("start " + str(start))
+    #print("end " + str(end))
+
+    i = start
+    while i < end:
+
+      #print(i, self.data[i])
+      #print("ukazatel " + str(self.memory_pointer))
+      #print("pamet " + str(self.memory[self.memory_pointer]))
+
+      if self.data[i] == '>':
         self.memory_pointer += 1
         self.memory.append(0)   # rozsireni pameti
 
-      elif i == '<':
+      elif self.data[i] == '<':
         self.memory_pointer -= 1
 
-      elif i == '+':
+      elif self.data[i] == '+':
         self.memory[self.memory_pointer] += 1
 
-      elif i == '-':
+      elif self.data[i] == '-':
         self.memory[self.memory_pointer] -= 1
 
-      elif i == '.':
-        #self.memory = b"abcde".decode("utf-8")
+      elif self.data[i] == '.':
+        self.output = self.memory.decode("utf-8")[self.memory_pointer]
+        print(self.output, end="")
 
-        #self.memory = self.memory.decode("utf-8")
-        #self.oputput = self.memory.decode("utf-8")[self.memory_pointer]
-        #self.oputput = self.memory[self.memory_pointer]
-        #self.oputput = self.memory.decode("utf-8")
-
-
-        out = self.memory.decode("utf-8")[self.memory_pointer]
-
-
-        #print(self.memory[self.memory_pointer])
-        #print(self.output.decode("utf-8"))
-        #print(self.output[self.memory_pointer])
-        #print(self.output)
-        print(out, end="")
-
-      elif i == ',':
+      elif self.data[i] == ',':
         pass
         # cteni vstupu
 
-      elif i == '[':
+      elif self.data[i] == '[':
+
+        for (k, l) in enumerate(self.data):
+          if l == ']':
+            self.loop(i + 1, k + 1)   # jdeme na znak za zacatkem cyklu, jinak se zacyklime, chceme ukoncovaci zavorku
+            break
+        #print("k je " + str(k))
+        i = k + 1                # skok za konec smycky
+        continue
+
+      elif self.data[i] == ']':
+        if self.memory[self.memory_pointer] == 0:
+          #print("pamet je 0, koncime cyklus")
+          return
+
+        else:
+        #  print("pamet neni 0")
+          self.memory[self.memory_pointer] -= 1
+
+        #  print("ukazatel nastaven " + str(self.memory_pointer))
+        #  print("pamet " + str(self.memory[self.memory_pointer]))
+
+          i = start                        # skok na zacatek cyklu
+          continue
+
+      elif self.data[i] == '!':
         pass
 
-      elif i == ']':
-        pass
-
-      elif i == '!':
-        pass
-
-
+      i += 1
 
 # ------------------------------------------------------------------------------
 class BrainLoller():
