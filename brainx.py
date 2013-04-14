@@ -35,6 +35,7 @@ class BrainFuck:
 
   # pridat funkci pro ocisteni kodu od komentaru ?
   # pridat odchyceni vyjimky bytearray index out of range ?
+  # --> pridat kontrolu preteceni a podteceni
 
   #
   # pro potřeby testů
@@ -84,9 +85,9 @@ class BrainFuck:
     i = start
     while i < end:
 
-      #print(i, self.data[i])
-      #print("ukazatel " + str(self.memory_pointer))
-      #print("pamet " + str(self.memory[self.memory_pointer]))
+    #  print(i, self.data[i])
+    #  print("ukazatel " + str(self.memory_pointer))
+    #  print("pamet " + str(self.memory[self.memory_pointer]))
 
       if self.data[i] == '>':
         self.memory_pointer += 1
@@ -96,10 +97,10 @@ class BrainFuck:
         self.memory_pointer -= 1
 
       elif self.data[i] == '+':
-        self.memory[self.memory_pointer] += 1
+        self.memory[self.memory_pointer] += 1   # inkrementace aktualni pametove bunky
 
       elif self.data[i] == '-':
-        self.memory[self.memory_pointer] -= 1
+        self.memory[self.memory_pointer] -= 1   # dekrementace aktualni pametove bunky
 
       elif self.data[i] == '.':
         self.output = self.memory.decode("utf-8")[self.memory_pointer]
@@ -115,19 +116,18 @@ class BrainFuck:
           if l == ']':
             self.loop(i + 1, k + 1)   # jdeme na znak za zacatkem cyklu, jinak se zacyklime, chceme ukoncovaci zavorku
             break
-        #print("k je " + str(k))
+    #    print("k je " + str(k))
         i = k + 1                # skok za konec smycky
         continue
 
       elif self.data[i] == ']':
+
         if self.memory[self.memory_pointer] == 0:
-          #print("pamet je 0, koncime cyklus")
+    #      print("pamet je 0, koncime cyklus")
           return
 
         else:
         #  print("pamet neni 0")
-          self.memory[self.memory_pointer] -= 1
-
         #  print("ukazatel nastaven " + str(self.memory_pointer))
         #  print("pamet " + str(self.memory[self.memory_pointer]))
 
