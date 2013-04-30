@@ -7,6 +7,7 @@
 import os
 import sys
 import struct
+import subprocess
 
 # ------------------------------------------------------------------------------
 class BrainFuck:
@@ -28,7 +29,10 @@ class BrainFuck:
     self.output = ''
 
     self.dataCheck()
+    #self.getInput()
+    self.stripData()
     self.loop(0, len(self.data))
+
 
   # pridat funkci pro ocisteni kodu od komentaru ?
   # -> urcite ma smysl ==> dobra optimalizace, protoze se musime vracet v kodu
@@ -48,6 +52,32 @@ class BrainFuck:
   def get_memory(self):
     # Nezapomeňte upravit získání návratové hodnoty podle vaší implementace!
     return self.memory
+
+# ------------------------------------------------------------------------------
+  def stripData(self):
+    """Orerazani dat o komentare a pripadny vstup pro vlastni program"""
+
+    tmpdata = ""
+
+    for i in self.data:
+      if i in "<>+-.,[]":
+        tmpdata += i
+
+    self.data = tmpdata
+
+# ------------------------------------------------------------------------------
+  def getInput(self):
+    """Zpracovani potencialniho vstupu programu"""
+    for (i, j) in enumerate(self.data):
+      if self.data[i] == '!':
+        p = subprocess.Popen(os.getpid(), stdin = subprocess.PIPE)
+        p.communicate(input = self.data[(i + 1):])
+#        sys.stdin.write(self.data[i:])
+#
+# import subprocess
+# p = subprocess.Popen(['bla'], stdin=subprocess.PIPE)
+# p.communicate(input = "blabalbal")
+#
 
 # ------------------------------------------------------------------------------
   def dataCheck(self):
@@ -123,13 +153,10 @@ class BrainFuck:
           i = start                        # skok na zacatek cyklu
           continue
 
-      elif self.data[i] == '!':
-        pass
-
       i += 1
 
 # ------------------------------------------------------------------------------
-class BrainLoller():
+class BrainLxoller():
   """Třída pro zpracování jazyka brainloller."""
 
 
