@@ -6,8 +6,6 @@
 # ------------------------------------------------------------------------------
 import os
 import sys
-import struct
-import subprocess
 
 # ------------------------------------------------------------------------------
 class BrainFuck:
@@ -28,6 +26,7 @@ class BrainFuck:
     # a) paměť výstupu
     self.output = ''
     self.user_input = ''
+    self.memory_size = 0
 
     self.dataCheck()
     self.getInput()
@@ -75,7 +74,7 @@ class BrainFuck:
         self.data = self.data[0:i]
         return
 
-# pripadne dalsi vykricniky jsou soucast vstupu
+# pripadne dalsi vykricniky jsou soucasti vstupu
 
 # ------------------------------------------------------------------------------
   def dataCheck(self):
@@ -112,12 +111,14 @@ class BrainFuck:
 # -----------------------------------
       if self.data[i] == '>':
         self.memory_pointer += 1
-        self.memory.append(0)   # rozsireni pameti
+        if self.memory_pointer == len(self.memory):
+          self.memory.append(0)   # rozsireni pameti
         i += 1
 
         while self.data[i] == '>':
           self.memory_pointer += 1
-          self.memory.append(0)   # rozsireni pameti
+          if self.memory_pointer == len(self.memory):
+            self.memory.append(0)   # rozsireni pameti
           i += 1
         continue
 
@@ -136,12 +137,18 @@ class BrainFuck:
 
 # -----------------------------------
       elif self.data[i] == '+':
+        if int(self.memory[self.memory_pointer]) + 1 >= 256:
+          self.memory[self.memory_pointer] %= 255
         self.memory[self.memory_pointer] += 1   # inkrementace aktualni pametove bunky
         i += 1
 
         while self.data[i] == '+':
+          #print(self.memory[self.memory_pointer])
+          if int(self.memory[self.memory_pointer]) + 1 >= 256:
+            self.memory[self.memory_pointer] %= 255
           self.memory[self.memory_pointer] += 1   # inkrementace aktualni pametove bunky
           i += 1
+
         continue
 
 # -----------------------------------
@@ -156,7 +163,9 @@ class BrainFuck:
 
 # -----------------------------------
       elif self.data[i] == '.':
-        self.output = self.memory.decode("utf-8")[self.memory_pointer]
+        #self.output = self.memory.decode("utf-8")[self.memory_pointer]
+        self.output = chr(self.memory[self.memory_pointer])
+
         print(self.output, end="")
         sys.stdout.flush()
 
@@ -214,10 +223,23 @@ class BrainCopter():
   def __init__(self, filename):
     """Inicializace interpretru braincopteru."""
 
-
     # self.data obsahuje rozkódovaný zdrojový kód brainfucku..
-    self.data = ''
+    self.data = self.convert(filename)
     # ..který pak předhodíme interpretru
     self.program = BrainFuck(self.data)
+
+
+# ------------------------------------------------------------------------------
+  def convert(self, filename):
+    """funkce pro konverzi brainCopteru na brainfuck"""
+
+    with open(filename) as f:
+      data = f.read()
+
+    print(data)
+
+
+
+
 
 
