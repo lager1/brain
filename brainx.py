@@ -75,6 +75,8 @@ class BrainFuck:
         self.data = self.data[0:i]
         return
 
+# pripadne dalsi vykricniky jsou soucast vstupu
+
 # ------------------------------------------------------------------------------
   def dataCheck(self):
     """Kontrola spravne zadaneho souboru s daty nebo spravneho kodu primo na radce"""
@@ -107,26 +109,58 @@ class BrainFuck:
     i = start
     while i < end:
 
+# -----------------------------------
       if self.data[i] == '>':
         self.memory_pointer += 1
         self.memory.append(0)   # rozsireni pameti
+        i += 1
 
+        while self.data[i] == '>':
+          self.memory_pointer += 1
+          self.memory.append(0)   # rozsireni pameti
+          i += 1
+        continue
+
+# -----------------------------------
       elif self.data[i] == '<':
         self.memory_pointer -= 1
+        i += 1
 
-        # tadyo dodelat kontrolu ze nelze jit doleva, pokud jsme na zacatku pasky
+        while self.data[i] == '<':
+          self.memory_pointer -= 1
+          i += 1
+        continue
 
+        # tady dodelat kontrolu ze nelze jit doleva, pokud jsme na zacatku pasky
+        # asi neni vylozene nutne
+
+# -----------------------------------
       elif self.data[i] == '+':
         self.memory[self.memory_pointer] += 1   # inkrementace aktualni pametove bunky
+        i += 1
 
+        while self.data[i] == '+':
+          self.memory[self.memory_pointer] += 1   # inkrementace aktualni pametove bunky
+          i += 1
+        continue
+
+# -----------------------------------
       elif self.data[i] == '-':
         self.memory[self.memory_pointer] -= 1   # dekrementace aktualni pametove bunky
+        i += 1
 
+        while self.data[i] == '-':
+          self.memory[self.memory_pointer] -= 1   # inkrementace aktualni pametove bunky
+          i += 1
+        continue
+
+# -----------------------------------
       elif self.data[i] == '.':
         self.output = self.memory.decode("utf-8")[self.memory_pointer]
         print(self.output, end="")
         sys.stdout.flush()
 
+# -----------------------------------
       elif self.data[i] == ',':
         if self.user_input != "":
           self.memory[self.memory_pointer] = ord(self.user_input[0])
@@ -135,6 +169,7 @@ class BrainFuck:
         else:
           self.memory[self.memory_pointer] = ord(sys.stdin.read(1))
 
+# -----------------------------------
       elif self.data[i] == '[':
 
         for (k, l) in enumerate(self.data):
@@ -145,6 +180,7 @@ class BrainFuck:
         i = k + 1                # skok za konec smycky
         continue
 
+# -----------------------------------
       elif self.data[i] == ']':
 
         if self.memory[self.memory_pointer] == 0:
