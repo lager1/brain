@@ -34,6 +34,9 @@ class BrainFuck:
     self.loop(0, len(self.data))
 
 
+
+  # lepsi by asi bylo predelat data na seznam -> vyresi se modulo
+
   # pridat funkci pro ocisteni kodu od komentaru ?
   # -> urcite ma smysl ==> dobra optimalizace, protoze se musime vracet v kodu
 
@@ -105,22 +108,30 @@ class BrainFuck:
          pointer - pametove misto, ktere udava zda se ma smycka jeste provadet
     """
 
+    #print("============================")
+
     i = start
     while i < end:
+
+      # debug
+      #print(self.memory)
+      #print(i, self.data[i])
+
 
 # -----------------------------------
       if self.data[i] == '>':
         self.memory_pointer += 1
         if self.memory_pointer == len(self.memory):
           self.memory.append(0)   # rozsireni pameti
-        i += 1
 
-        while self.data[i] == '>':
-          self.memory_pointer += 1
-          if self.memory_pointer == len(self.memory):
-            self.memory.append(0)   # rozsireni pameti
-          i += 1
-        continue
+    #i += 1
+
+    #    while self.data[i] == '>':
+    #      self.memory_pointer += 1
+    #      if self.memory_pointer == len(self.memory):
+    #        self.memory.append(0)   # rozsireni pameti
+    #      i += 1
+    #    continue
 
 # -----------------------------------
       elif self.data[i] == '<':
@@ -180,20 +191,36 @@ class BrainFuck:
 
 # -----------------------------------
       elif self.data[i] == '[':
+        i = self.loop(i + 1, len(self.data))     # len(self.data) neni nejlepsi - dalo by se vylepsit
 
-        for (k, l) in enumerate(self.data):
-          if l == ']':
-            self.loop(i + 1, k + 1)   # jdeme na znak za zacatkem cyklu, jinak se zacyklime, chceme ukoncovaci zavorku
-            break
+        #i = k + 1                # skok za konec smycky
 
-        i = k + 1                # skok za konec smycky
-        continue
+
+      #  #for (k, l) in enumerate(self.data):
+      #  for (k, l) in enumerate(self.data[(i + 1):]):     # vylepseni -> musime hledat od soucasne pozice dale, jinak mame problem !
+      #    # debug
+      #    print("cyklus, k: " + str(k) + ", l " + str(l))
+
+      #    if l == ']':
+      #      # debug
+      #      print("podminka ", i, k)
+
+      #      self.loop(i + 1, k + 1)   # jdeme na znak za zacatkem cyklu, jinak se zacyklime, chceme ukoncovaci zavorku
+      #      break
+
+      #  i = k + 1                # skok za konec smycky
+      #  continue
 
 # -----------------------------------
       elif self.data[i] == ']':
 
         if self.memory[self.memory_pointer] == 0:
-          return
+
+          # debug
+          #print("=============RET============")
+
+          #return (i + 1)    # vracime pozici, na kterou se ma skocit
+          return (i)    # vracime pozici, na kterou se ma skocit
 
         else:
           i = start                        # skok na zacatek cyklu
