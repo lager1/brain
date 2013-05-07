@@ -1,5 +1,5 @@
-﻿#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
+#!/opt/python3.3/bin/python3.3
+# encoding: utf-8
 
 
 # import modulu zodpovědného za testy jednotek
