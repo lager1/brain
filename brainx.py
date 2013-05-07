@@ -27,9 +27,10 @@ class BrainFuck:
     # DEBUG a testy
     # a) paměť výstupu
     self.output = ''
+    self.user_input = ''
 
     self.dataCheck()
-    #self.getInput()
+    self.getInput()
     self.stripData()
     self.loop(0, len(self.data))
 
@@ -55,7 +56,7 @@ class BrainFuck:
 
 # ------------------------------------------------------------------------------
   def stripData(self):
-    """Orerazani dat o komentare a pripadny vstup pro vlastni program"""
+    """Orerazani dat o komentare"""
 
     tmpdata = ""
 
@@ -70,14 +71,9 @@ class BrainFuck:
     """Zpracovani potencialniho vstupu programu"""
     for (i, j) in enumerate(self.data):
       if self.data[i] == '!':
-        p = subprocess.Popen(os.getpid(), stdin = subprocess.PIPE)
-        p.communicate(input = self.data[(i + 1):])
-#        sys.stdin.write(self.data[i:])
-#
-# import subprocess
-# p = subprocess.Popen(['bla'], stdin=subprocess.PIPE)
-# p.communicate(input = "blabalbal")
-#
+        self.user_input = self.data[(i + 1):]
+        self.data = self.data[0:i]
+        return
 
 # ------------------------------------------------------------------------------
   def dataCheck(self):
@@ -132,7 +128,12 @@ class BrainFuck:
         sys.stdout.flush()
 
       elif self.data[i] == ',':
-        self.memory[self.memory_pointer] = ord(sys.stdin.read(1))
+        if self.user_input != "":
+          self.memory[self.memory_pointer] = ord(self.user_input[0])
+          self.user_input = self.user_input[1:]
+
+        else:
+          self.memory[self.memory_pointer] = ord(sys.stdin.read(1))
 
       elif self.data[i] == '[':
 
