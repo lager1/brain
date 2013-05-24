@@ -38,19 +38,8 @@ class BrainFuck:
     self.dataCheck()
     self.getInput()
     self.stripData()
-# debug
-    #print(self.data)
-    #print(len(self.data))
     self.analyze(0)
-
-    #print(self.brackets)
-
     self.loop(0, len(self.data))
-
-
-    # debug
-    #print(self.output)
-    #print(self.memory)
 
 
 
@@ -87,57 +76,20 @@ class BrainFuck:
     delka = len(self.data)
     i = start
 
-
-    #print("-----------------------------------------")
-    #print("-----------------------------------------")
-    #print("-----------------------------------------")
-    #print("-----------------------------------------")
-    #print("-----------------------------------------")
-    #print("-----------------------------------------")
-    #print(self.data)
-
     while i < delka:
 
-      #print("start " + str(start))
-      #print("aktualni index " + str(i))
-      #print("aktualni znak  " + self.data[i])
-
       if self.data[i] == "[":
-        #self.brackets[i] = self.analyze(i + 1)  # rekurzi dosahneme projiti vsech potencialnich dvojic
-        #self.analyze(i + 1)
-        #print("volam se")
         i = self.analyze(i + 1) + 1    # posuneme hledani za nalezenou zavorku
         continue
-        #i = self.brackets[i] + 1    # posuneme hledani za nalezenou zavorku
+
         if i >= delka:
           return
 
       if self.data[i] == "]":
-        #self.brackets[start - 1] = i
-        #print("pridavam")
-        #print("start " + str(start))
-
         self.brackets[start - 1] = i
         return i
 
-# tady je jeste nutne upravit .. 
-
-
       i += 1
-
-## ------------------------------------------------------------------------------
-#  def analyze(self):
-#    """Analyza dat - zpracovani smycek a ulozeni jejich pozic do dictu"""
-#
-## zde predpokladame pouze syntakticky spravne soubory -> stejny pocet zavorek [ a ]
-#
-#    for (i, j) in enumerate(self.data):
-#      if j == "[":
-#        for (k, l) in enumerate(self.data[i:]):
-#          if l == "]":
-#            break
-#
-#        self.brackets[i] = k + i
 
 # ------------------------------------------------------------------------------
   def stripData(self):
@@ -297,18 +249,7 @@ class BrainFuck:
 # -----------------------------------
       elif self.data[i] == '[':
 
-        #print("oteviraci")
-        #print("index " + str(i))
-        #return
-
         if self.memory[self.memory_pointer] == 0:
-
-
-         # if self.brackets.get(i) == None:
-         #   print("none pro ")
-         #   print(i)
-         #   return
-
           i = self.brackets.get(i) + 1  # skok na znak za koncem cyklu
           continue
 
