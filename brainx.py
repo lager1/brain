@@ -125,22 +125,6 @@ class BrainFuck:
     elif self.data == '.' or self.data == '..':                   # aktualni nebo nadrazeny adresar
       return
 
-
-    # tohle v podstate asi ani neni potreba -> pouze privetivost pro uzivatele, navic v kodu muzou byt libovolne znaky 
-
-    #elif not os.path.exists(self.data):
-    #  for i in self.data:
-    #    if i not in "<>+-.,[]!\n\r":     # kontrola zda se sklada pouze z dovolenych znaku - pozor, navic jeste \n, \r
-
-    #    # debug
-    #      print("i, ktere neni spravny znak: " + i + str(ord(i)))
-
-    #      sys.exit("zadany soubor \"" + self.data + "\" neexistuje")
-
-    #      # tady by to chtelo jeste predelat -> kod muze obsahovat i komentare !!!
-
-    #elif not os.path.isfile(self.data):
-    #  sys.exit("zadany soubor \"" + self.data + "\" neni soubor")
 # ------------------------------------------------------------------------------
   def loop(self, start, end):
     """Vlastni smycka pro zpracovani kodu
@@ -149,7 +133,6 @@ class BrainFuck:
          end     - kde smycka konci
          pointer - pametove misto, ktere udava zda se ma smycka jeste provadet
     """
-
 
     i = start
     while i < end:
@@ -162,30 +145,19 @@ class BrainFuck:
       #print("----------------")
 
 
-
-      #print(str(len(self.memory)))
-      #print(str(self.memory))
-      #print(str(i))
-      #print(self.data[i])
-      #print(self.memory_pointer)
-      #print("----------------")
-
-
 # -----------------------------------
       if self.data[i] == '>':
         self.memory_pointer += 1
         if self.memory_pointer == len(self.memory):
-      ##    print("pridavam pamet")
           self.memory.append(0)   # rozsireni pameti
-      #  i += 1
+        i += 1
 
-      #  while self.data[i] == '>':
-      #    self.memory_pointer += 1
-      #    if self.memory_pointer == len(self.memory):
-      # #     print("pridavam pamet")
-      #      self.memory.append(0)   # rozsireni pameti
-      #    i += 1
-      #  continue
+        while self.data[i] == '>':
+          self.memory_pointer += 1
+          if self.memory_pointer == len(self.memory):
+            self.memory.append(0)   # rozsireni pameti
+          i += 1
+        continue
 
 # -----------------------------------
       elif self.data[i] == '<':
@@ -193,14 +165,9 @@ class BrainFuck:
           self.memory_pointer -= 1
         i += 1
 
-        #while self.data[i] == '<':
-        #  self.memory_pointer -= 1
-        #  i += 1
-
-
-        # hm ?
-        #if self.memory_pointer < 0:
-        #  self.memory_pointer = 0
+        while self.data[i] == '<':
+          self.memory_pointer -= 1
+          i += 1
 
         continue
 
@@ -210,26 +177,26 @@ class BrainFuck:
 # -----------------------------------
       elif self.data[i] == '+':
         self.memory[self.memory_pointer] += 1   # inkrementace aktualni pametove bunky
-        #i += 1
+        i += 1
 
-        #while self.data[i] == '+':
-        #  self.memory[self.memory_pointer] += 1   # inkrementace aktualni pametove bunky
-        #  i += 1
+        while self.data[i] == '+':
+          self.memory[self.memory_pointer] += 1   # inkrementace aktualni pametove bunky
+          i += 1
 
-        #self.memory[self.memory_pointer] %= 255
-        #continue
+        self.memory[self.memory_pointer] %= 255
+        continue
 
 # -----------------------------------
       elif self.data[i] == '-':
         self.memory[self.memory_pointer] -= 1   # dekrementace aktualni pametove bunky
-        #i += 1
+        i += 1
 
-        #while self.data[i] == '-':
-        #  self.memory[self.memory_pointer] -= 1   # inkrementace aktualni pametove bunky
-        #  i += 1
+        while self.data[i] == '-':
+          self.memory[self.memory_pointer] -= 1   # inkrementace aktualni pametove bunky
+          i += 1
 
-        #self.memory[self.memory_pointer] %= 255
-        #continue
+        self.memory[self.memory_pointer] %= 255
+        continue
 
 # -----------------------------------
       elif self.data[i] == '.':
