@@ -18,7 +18,10 @@ class BrainFuck:
     self.data = data
 
     # inicializace proměnných
-    self.memory = bytearray(memory)
+    #self.memory = bytearray(memory)
+
+    # predelame na list -> nevyhazuje vyjimku s hodnotami !
+    self.memory = list(memory)
     # zde priradit bytearray misto v hlavicce
     self.memory_pointer = memory_pointer
 
@@ -26,11 +29,24 @@ class BrainFuck:
     # a) paměť výstupu
     self.output = ''
     self.user_input = ''
-    self.memory_size = 0
+    #self.brackets = []  # prazdny seznam zavorek
+    self.brackets = dict()  # dict - zavorky
+
+#self.memory_size = 0
+# -> neni treba
 
     self.dataCheck()
     self.getInput()
     self.stripData()
+    self.analyze()
+
+    # tady pridame jeste neco jako 
+    # vytvoreni seznamu -> klic, hodnota, klic je pozice leve zavorky, hodnota je pozice prave zavorky -> dict
+    # nebo by byla moznost to udelat jako seznam dvojic -> leva a prava
+
+    # debug
+    #print(self.brackets)
+
     self.loop(0, len(self.data))
 
 
@@ -55,6 +71,39 @@ class BrainFuck:
   def get_memory(self):
     # Nezapomeňte upravit získání návratové hodnoty podle vaší implementace!
     return self.memory
+
+# ------------------------------------------------------------------------------
+  def analyze(self):
+    """Analyza dat - zpracovani smycek a ulozeni jejich pozic do dictu"""
+
+# zde predpokladame pouze syntakticky spravne soubory -> stejny pocet zavorek [ a ]
+
+    for (i, j) in enumerate(self.data):
+      if j == "[":
+        for (k, l) in enumerate(self.data[i:]):
+          if l == "]":
+            break
+
+        self.brackets[i] = k + i
+
+
+## ------------------------------------------------------------------------------
+#  def analyze(self):
+#    """Analyza dat - zpracovani smycek a ulozeni jejich pozic do seznamu"""
+#
+## zde predpokladame pouze syntakticky spravne soubory -> stejny pocet zavorek [ a ]
+#
+#    for (i, j) in enumerate(self.data):
+#      if j == "[":
+#        tmp = []
+#        tmp.append(i)
+#        for (k, l) in enumerate(self.data[i:]):
+#          if l == "]":
+#            break
+#
+#        tmp.append(k + i)
+#        self.brackets.append(tmp)
+#
 
 # ------------------------------------------------------------------------------
   def stripData(self):
@@ -90,15 +139,22 @@ class BrainFuck:
     elif self.data == '.' or self.data == '..':                   # aktualni nebo nadrazeny adresar
       return
 
-    elif not os.path.exists(self.data):
-      for i in self.data:
-        if i not in "<>+-.,[]!":     # kontrola zda se sklada pouze z dovolenych znaku
-          sys.exit("zadany soubor \"" + self.data + "\" neexistuje")
 
-          # tady by to chtelo jeste predelat -> kod muze obsahovat i komentare !!!
+    # tohle v podstate asi ani neni potreba -> pouze privetivost pro uzivatele, navic v kodu muzou byt libovolne znaky 
 
-    elif not os.path.isfile(self.data):
-      sys.exit("zadany soubor \"" + self.data + "\" neni soubor")
+    #elif not os.path.exists(self.data):
+    #  for i in self.data:
+    #    if i not in "<>+-.,[]!\n\r":     # kontrola zda se sklada pouze z dovolenych znaku - pozor, navic jeste \n, \r
+
+    #    # debug
+    #      print("i, ktere neni spravny znak: " + i + str(ord(i)))
+
+    #      sys.exit("zadany soubor \"" + self.data + "\" neexistuje")
+
+    #      # tady by to chtelo jeste predelat -> kod muze obsahovat i komentare !!!
+
+    #elif not os.path.isfile(self.data):
+    #  sys.exit("zadany soubor \"" + self.data + "\" neni soubor")
 # ------------------------------------------------------------------------------
   def loop(self, start, end):
     """Vlastni smycka pro zpracovani kodu
@@ -108,39 +164,58 @@ class BrainFuck:
          pointer - pametove misto, ktere udava zda se ma smycka jeste provadet
     """
 
-    #print("============================")
 
     i = start
     while i < end:
 
-      # debug
-      #print(self.memory)
-      #print(i, self.data[i])
+      #print("delka pameti: " + str(len(self.memory)))
+      #print("pamet: " + str(self.memory))
+      #print("aktualni index: " + str(i))
+      #print("aktualni znak: " + self.data[i])
+      #print("ukazatel: " + str(self.memory_pointer))
+      #print("----------------")
+
+
+
+      #print(str(len(self.memory)))
+      #print(str(self.memory))
+      #print(str(i))
+      #print(self.data[i])
+      #print(self.memory_pointer)
+      #print("----------------")
 
 
 # -----------------------------------
       if self.data[i] == '>':
         self.memory_pointer += 1
         if self.memory_pointer == len(self.memory):
+      ##    print("pridavam pamet")
           self.memory.append(0)   # rozsireni pameti
+      #  i += 1
 
-    #i += 1
-
-    #    while self.data[i] == '>':
-    #      self.memory_pointer += 1
-    #      if self.memory_pointer == len(self.memory):
-    #        self.memory.append(0)   # rozsireni pameti
-    #      i += 1
-    #    continue
+      #  while self.data[i] == '>':
+      #    self.memory_pointer += 1
+      #    if self.memory_pointer == len(self.memory):
+      # #     print("pridavam pamet")
+      #      self.memory.append(0)   # rozsireni pameti
+      #    i += 1
+      #  continue
 
 # -----------------------------------
       elif self.data[i] == '<':
-        self.memory_pointer -= 1
+        if self.memory_pointer != 0:
+          self.memory_pointer -= 1
         i += 1
 
-        while self.data[i] == '<':
-          self.memory_pointer -= 1
-          i += 1
+        #while self.data[i] == '<':
+        #  self.memory_pointer -= 1
+        #  i += 1
+
+
+        # hm ?
+        #if self.memory_pointer < 0:
+        #  self.memory_pointer = 0
+
         continue
 
         # tady dodelat kontrolu ze nelze jit doleva, pokud jsme na zacatku pasky
@@ -148,37 +223,43 @@ class BrainFuck:
 
 # -----------------------------------
       elif self.data[i] == '+':
-        if int(self.memory[self.memory_pointer]) + 1 >= 256:
-          self.memory[self.memory_pointer] %= 255
         self.memory[self.memory_pointer] += 1   # inkrementace aktualni pametove bunky
-        i += 1
+        #i += 1
 
-        while self.data[i] == '+':
-          #print(self.memory[self.memory_pointer])
-          if int(self.memory[self.memory_pointer]) + 1 >= 256:
-            self.memory[self.memory_pointer] %= 255
-          self.memory[self.memory_pointer] += 1   # inkrementace aktualni pametove bunky
-          i += 1
+        #while self.data[i] == '+':
+        #  self.memory[self.memory_pointer] += 1   # inkrementace aktualni pametove bunky
+        #  i += 1
 
-        continue
+        #self.memory[self.memory_pointer] %= 255
+        #continue
 
 # -----------------------------------
       elif self.data[i] == '-':
         self.memory[self.memory_pointer] -= 1   # dekrementace aktualni pametove bunky
-        i += 1
+        #i += 1
 
-        while self.data[i] == '-':
-          self.memory[self.memory_pointer] -= 1   # inkrementace aktualni pametove bunky
-          i += 1
-        continue
+        #while self.data[i] == '-':
+        #  self.memory[self.memory_pointer] -= 1   # inkrementace aktualni pametove bunky
+        #  i += 1
+
+        #self.memory[self.memory_pointer] %= 255
+        #continue
 
 # -----------------------------------
       elif self.data[i] == '.':
         #self.output = self.memory.decode("utf-8")[self.memory_pointer]
-        self.output = chr(self.memory[self.memory_pointer])
+        #self.output = chr(self.memory[self.memory_pointer])
+        #self.output = self.output + chr(self.memory[self.memory_pointer])
+        # hm ?
 
-        print(self.output, end="")
+
+        self.output = self.output + chr(self.memory[self.memory_pointer])
+        print(chr(self.memory[self.memory_pointer]), end="")
         sys.stdout.flush()
+
+
+        #print(self.output, end="")
+        #sys.stdout.flush()
 
 # -----------------------------------
       elif self.data[i] == ',':
@@ -191,35 +272,17 @@ class BrainFuck:
 
 # -----------------------------------
       elif self.data[i] == '[':
-        i = self.loop(i + 1, len(self.data))     # len(self.data) neni nejlepsi - dalo by se vylepsit
+        if self.memory[self.memory_pointer] == 0:
+          i = self.brackets.get(i) + 1  # skok na znak za koncem cyklu
+          continue
 
-        #i = k + 1                # skok za konec smycky
-
-
-      #  #for (k, l) in enumerate(self.data):
-      #  for (k, l) in enumerate(self.data[(i + 1):]):     # vylepseni -> musime hledat od soucasne pozice dale, jinak mame problem !
-      #    # debug
-      #    print("cyklus, k: " + str(k) + ", l " + str(l))
-
-      #    if l == ']':
-      #      # debug
-      #      print("podminka ", i, k)
-
-      #      self.loop(i + 1, k + 1)   # jdeme na znak za zacatkem cyklu, jinak se zacyklime, chceme ukoncovaci zavorku
-      #      break
-
-      #  i = k + 1                # skok za konec smycky
-      #  continue
+        else:
+          i = self.loop(i + 1, len(self.data))     # len(self.data) neni nejlepsi - dalo by se vylepsit
 
 # -----------------------------------
       elif self.data[i] == ']':
 
         if self.memory[self.memory_pointer] == 0:
-
-          # debug
-          #print("=============RET============")
-
-          #return (i + 1)    # vracime pozici, na kterou se ma skocit
           return (i)    # vracime pozici, na kterou se ma skocit
 
         else:
@@ -227,6 +290,15 @@ class BrainFuck:
           continue
 
       i += 1
+# -----------------------------------
+    # nakonec musime vratit bytearray
+    self.memory = bytearray(self.memory)
+
+    #print(self.output, end="")
+    #sys.stdout.flush()
+    # toto je nesmysl
+
+    # na konci implicitne tisk ?
 
 # ------------------------------------------------------------------------------
 class BrainLxoller():
@@ -264,9 +336,5 @@ class BrainCopter():
       data = f.read()
 
     print(data)
-
-
-
-
 
 
