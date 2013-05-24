@@ -29,7 +29,7 @@ class BrainFuck:
     # a) paměť výstupu
     self.output = ''
     self.user_input = ''
-    #self.brackets = []  # prazdny seznam zavorek
+
     self.brackets = dict()  # dict - zavorky
 
 #self.memory_size = 0
@@ -38,16 +38,19 @@ class BrainFuck:
     self.dataCheck()
     self.getInput()
     self.stripData()
-    self.analyze()
+# debug
+    #print(self.data)
+    #print(len(self.data))
+    self.analyze(0)
 
-    # tady pridame jeste neco jako 
-    # vytvoreni seznamu -> klic, hodnota, klic je pozice leve zavorky, hodnota je pozice prave zavorky -> dict
-    # nebo by byla moznost to udelat jako seznam dvojic -> leva a prava
-
-    # debug
     #print(self.brackets)
 
     self.loop(0, len(self.data))
+
+
+    # debug
+    #print(self.output)
+    #print(self.memory)
 
 
 
@@ -72,38 +75,69 @@ class BrainFuck:
     # Nezapomeňte upravit získání návratové hodnoty podle vaší implementace!
     return self.memory
 
+
 # ------------------------------------------------------------------------------
-  def analyze(self):
-    """Analyza dat - zpracovani smycek a ulozeni jejich pozic do dictu"""
+  def analyze(self, start):
+    """Analyza dat - zpracovani smycek a ulozeni jejich pozic do dictu
+    parametr start udava odkud zaciname hledat
+    """
 
 # zde predpokladame pouze syntakticky spravne soubory -> stejny pocet zavorek [ a ]
 
-    for (i, j) in enumerate(self.data):
-      if j == "[":
-        for (k, l) in enumerate(self.data[i:]):
-          if l == "]":
-            break
+    delka = len(self.data)
+    i = start
 
-        self.brackets[i] = k + i
 
+    #print("-----------------------------------------")
+    #print("-----------------------------------------")
+    #print("-----------------------------------------")
+    #print("-----------------------------------------")
+    #print("-----------------------------------------")
+    #print("-----------------------------------------")
+    #print(self.data)
+
+    while i < delka:
+
+      #print("start " + str(start))
+      #print("aktualni index " + str(i))
+      #print("aktualni znak  " + self.data[i])
+
+      if self.data[i] == "[":
+        #self.brackets[i] = self.analyze(i + 1)  # rekurzi dosahneme projiti vsech potencialnich dvojic
+        #self.analyze(i + 1)
+        #print("volam se")
+        i = self.analyze(i + 1) + 1    # posuneme hledani za nalezenou zavorku
+        continue
+        #i = self.brackets[i] + 1    # posuneme hledani za nalezenou zavorku
+        if i >= delka:
+          return
+
+      if self.data[i] == "]":
+        #self.brackets[start - 1] = i
+        #print("pridavam")
+        #print("start " + str(start))
+
+        self.brackets[start - 1] = i
+        return i
+
+# tady je jeste nutne upravit .. 
+
+
+      i += 1
 
 ## ------------------------------------------------------------------------------
 #  def analyze(self):
-#    """Analyza dat - zpracovani smycek a ulozeni jejich pozic do seznamu"""
+#    """Analyza dat - zpracovani smycek a ulozeni jejich pozic do dictu"""
 #
 ## zde predpokladame pouze syntakticky spravne soubory -> stejny pocet zavorek [ a ]
 #
 #    for (i, j) in enumerate(self.data):
 #      if j == "[":
-#        tmp = []
-#        tmp.append(i)
 #        for (k, l) in enumerate(self.data[i:]):
 #          if l == "]":
 #            break
 #
-#        tmp.append(k + i)
-#        self.brackets.append(tmp)
-#
+#        self.brackets[i] = k + i
 
 # ------------------------------------------------------------------------------
   def stripData(self):
@@ -247,19 +281,9 @@ class BrainFuck:
 
 # -----------------------------------
       elif self.data[i] == '.':
-        #self.output = self.memory.decode("utf-8")[self.memory_pointer]
-        #self.output = chr(self.memory[self.memory_pointer])
-        #self.output = self.output + chr(self.memory[self.memory_pointer])
-        # hm ?
-
-
         self.output = self.output + chr(self.memory[self.memory_pointer])
         print(chr(self.memory[self.memory_pointer]), end="")
         sys.stdout.flush()
-
-
-        #print(self.output, end="")
-        #sys.stdout.flush()
 
 # -----------------------------------
       elif self.data[i] == ',':
@@ -272,7 +296,19 @@ class BrainFuck:
 
 # -----------------------------------
       elif self.data[i] == '[':
+
+        #print("oteviraci")
+        #print("index " + str(i))
+        #return
+
         if self.memory[self.memory_pointer] == 0:
+
+
+         # if self.brackets.get(i) == None:
+         #   print("none pro ")
+         #   print(i)
+         #   return
+
           i = self.brackets.get(i) + 1  # skok na znak za koncem cyklu
           continue
 
@@ -294,11 +330,6 @@ class BrainFuck:
     # nakonec musime vratit bytearray
     self.memory = bytearray(self.memory)
 
-    #print(self.output, end="")
-    #sys.stdout.flush()
-    # toto je nesmysl
-
-    # na konci implicitne tisk ?
 
 # ------------------------------------------------------------------------------
 class BrainLxoller():
