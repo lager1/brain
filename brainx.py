@@ -1,11 +1,12 @@
 ﻿#!/opt/python3.3/bin/python3.3
-# -*- coding: utf-8 -*-
+# encoding: utf-8
 
 # ------------------------------------------------------------------------------
 # import knihoven
 # ------------------------------------------------------------------------------
 import os
 import sys
+import image_png
 
 # ------------------------------------------------------------------------------
 class BrainFuck:
@@ -32,27 +33,11 @@ class BrainFuck:
 
     self.brackets = dict()  # dict - zavorky
 
-#self.memory_size = 0
-# -> neni treba
-
     self.dataCheck()
     self.getInput()
     self.stripData()
     self.analyze(0)
     self.loop(0, len(self.data))
-
-
-
-  # lepsi by asi bylo predelat data na seznam -> vyresi se modulo
-
-  # pridat funkci pro ocisteni kodu od komentaru ?
-  # -> urcite ma smysl ==> dobra optimalizace, protoze se musime vracet v kodu
-
-
-  # dale ma smysl optimalizovat pomci spojovani stejnych prikazu zasebou -> napr 30 x + muzu vykonat jako jeden prikaz a nemusis 30 x iterovat
-
-  # odevzdani v podstate do konce semestru
-
 
   # pridat odchyceni vyjimky bytearray index out of range ?
   # --> pridat kontrolu preteceni a podteceni
@@ -240,7 +225,7 @@ class BrainFuck:
 
 
 # ------------------------------------------------------------------------------
-class BrainLxoller():
+class BrainLoller():
   """Třída pro zpracování jazyka brainloller."""
 
 
@@ -264,16 +249,17 @@ class BrainCopter():
     # self.data obsahuje rozkódovaný zdrojový kód brainfucku..
     self.data = self.convert(filename)
     # ..který pak předhodíme interpretru
-    self.program = BrainFuck(self.data)
+    #self.program = BrainFuck(self.data)
 
 
 # ------------------------------------------------------------------------------
   def convert(self, filename):
     """funkce pro konverzi brainCopteru na brainfuck"""
 
-    with open(filename) as f:
-      data = f.read()
+    #with open(filename) as f:
+    #  data = f.read()
 
-    print(data)
+    #print(data)
+    image_png.PngReader(filename)
 
 

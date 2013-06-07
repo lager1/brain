@@ -31,11 +31,15 @@ def main():
     if args.braincopter == True:
       brainx.BrainCopter(args.file)
 
-    elif args.braincopter == True:
-      brainx.BrainCopter(args.file)
+    elif args.brainloller == True:
+      brainx.BrainLoller(args.file)
 
     else:
       brainx.BrainFuck(args.file)
+
+  else:
+    print("nebyl zadan zadny soubor")
+    exit(1)
 
 # ------------------------------------------------------------------------------
 if __name__ == "__main__":
