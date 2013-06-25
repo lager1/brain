@@ -60,7 +60,7 @@ class PngReader():
         self.ihdr_col_type = self.ihdr_data[9:10]   # barvovy typ
         self.ihdr_compression = self.ihdr_data[10:11]   # metoda komprese
         self.ihdr_filter = self.ihdr_data[11:12]        # metoda filtrace
-        self.ihdr_interlace = self.ihdr_data[12:13]     # metoda prokladani
+        self.ihdr_interlace = self.ihdr_data[12:13]     # metoda prokladani , musi byt 0 !
 
         self.ihdr_crc = f.read(4)     # kontrolni soucet
 
@@ -94,24 +94,61 @@ class PngReader():
           raise PNGWrongCrcError("Zadaný soubor je pravděpodobně poškozen.")
 
         print("------------------------------------------------------")
-        #print(zlib.decompress(self.chunk_data))
-        print(zlib.decompress(self.idat))
+
+        self.data = zlib.decompress(self.idat)
+        print(self.data)
+        #print(len(self.data))
+
+        #for i in range((struct.unpack('>I', self.ihdr_height)[0] * struct.unpack('>I', self.ihdr_width)[0] + 1) * 3):
+        #for i in range(0, (struct.unpack('>I', self.ihdr_height)[0] * struct.unpack('>I', self.ihdr_width)[0] + 1) * 3, struct.unpack('>I', self.ihdr_width)[0]):
+        ##for i in range(1, (struct.unpack('>I', self.ihdr_height)[0] * struct.unpack('>I', self.ihdr_width)[0] + 1) * 3, struct.unpack('>I', self.ihdr_width)[0]):
+        #  #for j in range((struct.unpack('>I', self.ihdr_width)[0] * 3) + 1):
+        #  #for j in range((struct.unpack('>I', self.ihdr_width)[0] * 3) + 1):
+        #  #self.rgb.append(self.data[i:i + 3])
+
+        #  if i % ((struct.unpack('>I', self.ihdr_width)[0] * 3) + 1) == 0:  # filtr -> ten nas nezajima
+        #    print("----------------------------------")
+        #    print("zacatek radky")
+        #    print(self.data[i])
+        #    print("----------------------------------")
+        #    continue
+
+
+        #  print(self.data[i])
+        #  #self.rgb.append(struct.unpack('>BBB', self.data[i:i + 3]))
+        #  #print(self.data[i])
+
+        #for i in range((struct.unpack('>I', self.ihdr_height)[0] * struct.unpack('>I', self.ihdr_width)[0] + 1) * 3):
+        # tento cyklus funguje -> prochazeni jednotlivych prvku
+
+
+        #for i in range(0, (struct.unpack('>I', self.ihdr_height)[0] * struct.unpack('>I', self.ihdr_width)[0] + 1) * 3, (struct.unpack('>I', self.ihdr_width)[0] * 3) + 1):
+        for i in range(1, (struct.unpack('>I', self.ihdr_height)[0] * struct.unpack('>I', self.ihdr_width)[0] + 1) * 3, (struct.unpack('>I', self.ihdr_width)[0] * 3) + 1):
+          #if i % ((struct.unpack('>I', self.ihdr_width)[0] * 3) + 1) == 0:  # filtr -> ten nas nezajima
+          #  continue
+          for j in range(0, 3 * struct.unpack('>I', self.ihdr_width)[0], 3):
+            print(self.data[i + j: i + j + 3])
+
+
+          #print(self.data[i])
+        #for i in range(struct.unpack('>I', self.ihdr_height)[0]):
+        #  for j in range((struct.unpack('>I', self.ihdr_width)[0] * 3) + 1):
+        #    for k in range(0, 3):
+
+
+#            if j == 0:  # zacatek radku -> filtr
+#              continue
+#
+#            print(self.data[3 * i + j])
 
 
         print("------------------------------------------------------")
 
-
-
-        #self.data = str(zlib.decompress(self.idat)).strip('b\'\\x').strip('\'').split('\\x')
-        self.data = zlib.decompress(self.idat)
-        print(self.data)
-
-
         print(struct.unpack('>I', self.ihdr_width)[0])
         print(struct.unpack('>I', self.ihdr_height)[0])
         print(struct.unpack('>B', self.ihdr_depth)[0])
+        print(self.rgb)
 
-        self.data_int = []
 
         #for i in self.data:
         #  self.data_int.append(int(i, 16))      # konverze na cisla
@@ -135,39 +172,12 @@ class PngReader():
 
         #print(self.rgb)
 
-        #self.rgb = []   # vycisteni, pouze debug
-
-
-        # kazde 3 byty jsou prefixovany 0
-
-
-        #print(zlib.decompress(self.idat))
-
-
-#        for i in range(0, len(zlib.decompress(self.idat)), 3):
-
-
 
 
         # RGB-data obrázku jako seznam seznamů řádek,
         #   v každé řádce co pixel, to trojce (R, G, B)
         #self.rgb = []
 
-
-
-
-        #self.data = f.read()
-
-        #print(self.data[:4])  # hlavicka
-        #print(self.data[4:8])  # IHDR
-        #print(self.data[8:21])  # data
-        #print(self.data[21:25])  # crc
-
-        #print("")
-        #print("")
-        #print("")
-        #print("")
-        #print(self.data)
 
       # cteni udelat v bloku with -> cteme dany pocet bytu
 
