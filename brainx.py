@@ -7,6 +7,8 @@
 import os
 import sys
 import image_png
+import struct
+import zlib
 
 # ------------------------------------------------------------------------------
 class BrainFuck:
@@ -232,9 +234,11 @@ class BrainLoller():
   def __init__(self, filename):
     """Inicializace interpretru brainlolleru."""
 
+    image_png.PngReader(filename)
 
     # self.data obsahuje rozkódovaný zdrojový kód brainfucku..
     self.data = ''
+
     # ..který pak předhodíme interpretru
     self.program = BrainFuck(self.data)
 
