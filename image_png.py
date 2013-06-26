@@ -3,6 +3,7 @@
 
 import struct
 import zlib
+import copy
 
 class PNGWrongHeaderError(Exception):
     """Výjimka oznamující, že načítaný soubor zřejmě není PNG-obrázkem."""
@@ -56,6 +57,7 @@ class PngReader():
       # RGB-data obrázku jako seznam seznamů řádek,
       #   v každé řádce co pixel, to trojce (R, G, B)
       self.rgb = []
+      self.rgb_cpy = []     # promenna obsahujici pouze samotne pixely obrazku, obsahuje pouze listy -> muzeme menit obsah - pouze kopie puvodni promenne pro filtraci
 
       with open(filepath, 'rb') as f:
         self.header = f.read(8)
@@ -116,15 +118,29 @@ class PngReader():
           self.scanline = [self.data[i]]
 
           self.tmp = []
+          #self.tmp_lst = []
           for j in range(1, struct.unpack('>I', self.ihdr_width)[0] * 3, 3):   # cyklus pro jednotlive pixely v radku
-            self.tmp.append(struct.unpack('>BBB', self.data[i + j:i + j + 3]))
+            self.tmp.append(list(struct.unpack('>BBB', self.data[i + j:i + j + 3])))
+            #self.tmp_lst.append(list(struct.unpack('>BBB', self.data[i + j:i + j + 3])))
 
           self.scanline.append(self.tmp)
           self.rgb.append(self.scanline)
+          #self.rgb_lst.append(self.tmp_lst)
 
+        self.rgb_cpy = self.rgb
+        self.rgb_cpy = copy.deepcopy(self.rgb)
 
-        #print(len(self.rgb))
-        #print(self.rgb)
+        #print(self.rgb_cpy)
+        #print("")
+        #print("")
+        #print("")
+        #print("")
+        #print(self.rgb_cpy[0])
+        #print("")
+        #print("")
+        #print(self.rgb_cpy[0][0])
+
+        #return
 
         for i in range(struct.unpack('>I', self.ihdr_height)[0]):  # cyklus pro pocet radek -> zpracovani filtru
           if self.rgb[i][0] == 0:
@@ -149,11 +165,16 @@ class PngReader():
             #  print("]")
 
 
+            # je treba pixely prochazet na urovni bajtu !!!!
             for k in range(struct.unpack('>I', self.ihdr_height)[0]):
-              print("[", end='')
-              for l in range(struct.unpack('>I', self.ihdr_width)[0]):
-                print(self.rgb[k][1][l], end=', ')
-              print("]")
+              for l in range(struct.unpack('>I', self.ihdr_width)[0]):      # mozna nutnost osetreni neexistence .. ?
+                self.rgb_cpy[k][1][l].clear()   # vycistime vsechny docasne pixely
+                for m in range(3):
+                  #self.rgb_cpy[k][1][l][m] = self.rgb[k][1][l][m] - self.paeth(self.rgb[k][1][l - 1][m], self.rgb[k - 1][1][l][m], self.rgb[k - 1][1][l - 1][m])    # pixely jsou az o uroven niz !!
+                  self.rgb_cpy[k][1][l].append(self.rgb[k][1][l][m] - self.paeth(self.rgb[k][1][l - 1][m], self.rgb[k - 1][1][l][m], self.rgb[k - 1][1][l - 1][m]))    # pixely jsou az o uroven niz !!
+                # po rozfiltrovani jednoho pixelu zkopirovat jednu mapu na druhou?
+                self.rgb = copy.deepcopy(self.rgb_cpy)
+
 
 
 
