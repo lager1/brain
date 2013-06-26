@@ -36,8 +36,25 @@ class PNGWrongCrcError(Exception):
 class PngReader():
     """Třída pro práci s PNG-obrázky."""
 
+    def paeth(self, a, b, c):
+      p = a + b - c
+      pa = abs(p - a)
+      pb = abs(p - b)
+      pc = abs(p - c)
+
+      if pa <= pb and pa <= pc:
+        return a
+
+      elif pb <= pc:
+        return b
+
+      else:
+        return c
+
     def __init__(self, filepath):
 
+      # RGB-data obrázku jako seznam seznamů řádek,
+      #   v každé řádce co pixel, to trojce (R, G, B)
       self.rgb = []
 
       with open(filepath, 'rb') as f:
@@ -93,95 +110,152 @@ class PngReader():
         if zlib.crc32(self.iend_type) != struct.unpack('>I', self.iend_crc)[0]:
           raise PNGWrongCrcError("Zadaný soubor je pravděpodobně poškozen.")
 
-        print("------------------------------------------------------")
-
         self.data = zlib.decompress(self.idat)
-        print(self.data)
-        #print(len(self.data))
 
-        #for i in range((struct.unpack('>I', self.ihdr_height)[0] * struct.unpack('>I', self.ihdr_width)[0] + 1) * 3):
-        #for i in range(0, (struct.unpack('>I', self.ihdr_height)[0] * struct.unpack('>I', self.ihdr_width)[0] + 1) * 3, struct.unpack('>I', self.ihdr_width)[0]):
-        ##for i in range(1, (struct.unpack('>I', self.ihdr_height)[0] * struct.unpack('>I', self.ihdr_width)[0] + 1) * 3, struct.unpack('>I', self.ihdr_width)[0]):
-        #  #for j in range((struct.unpack('>I', self.ihdr_width)[0] * 3) + 1):
-        #  #for j in range((struct.unpack('>I', self.ihdr_width)[0] * 3) + 1):
-        #  #self.rgb.append(self.data[i:i + 3])
+        for i in range(0, len(self.data), (struct.unpack('>I', self.ihdr_width)[0] * 3) + 1):  # cyklus pro pocet radek s krokem sirky radku + 1
+          self.scanline = [self.data[i]]
 
-        #  if i % ((struct.unpack('>I', self.ihdr_width)[0] * 3) + 1) == 0:  # filtr -> ten nas nezajima
-        #    print("----------------------------------")
-        #    print("zacatek radky")
-        #    print(self.data[i])
-        #    print("----------------------------------")
-        #    continue
+          self.tmp = []
+          for j in range(1, struct.unpack('>I', self.ihdr_width)[0] * 3, 3):   # cyklus pro jednotlive pixely v radku
+            self.tmp.append(struct.unpack('>BBB', self.data[i + j:i + j + 3]))
+
+          self.scanline.append(self.tmp)
+          self.rgb.append(self.scanline)
 
 
-        #  print(self.data[i])
-        #  #self.rgb.append(struct.unpack('>BBB', self.data[i:i + 3]))
-        #  #print(self.data[i])
-
-        #for i in range((struct.unpack('>I', self.ihdr_height)[0] * struct.unpack('>I', self.ihdr_width)[0] + 1) * 3):
-        # tento cyklus funguje -> prochazeni jednotlivych prvku
-
-
-        #for i in range(0, (struct.unpack('>I', self.ihdr_height)[0] * struct.unpack('>I', self.ihdr_width)[0] + 1) * 3, (struct.unpack('>I', self.ihdr_width)[0] * 3) + 1):
-        for i in range(1, (struct.unpack('>I', self.ihdr_height)[0] * struct.unpack('>I', self.ihdr_width)[0] + 1) * 3, (struct.unpack('>I', self.ihdr_width)[0] * 3) + 1):
-          #if i % ((struct.unpack('>I', self.ihdr_width)[0] * 3) + 1) == 0:  # filtr -> ten nas nezajima
-          #  continue
-          for j in range(0, 3 * struct.unpack('>I', self.ihdr_width)[0], 3):
-            print(self.data[i + j: i + j + 3])
-
-
-          #print(self.data[i])
-        #for i in range(struct.unpack('>I', self.ihdr_height)[0]):
-        #  for j in range((struct.unpack('>I', self.ihdr_width)[0] * 3) + 1):
-        #    for k in range(0, 3):
-
-
-#            if j == 0:  # zacatek radku -> filtr
-#              continue
-#
-#            print(self.data[3 * i + j])
-
-
-        print("------------------------------------------------------")
-
-        print(struct.unpack('>I', self.ihdr_width)[0])
-        print(struct.unpack('>I', self.ihdr_height)[0])
-        print(struct.unpack('>B', self.ihdr_depth)[0])
-        print(self.rgb)
-
-
-        #for i in self.data:
-        #  self.data_int.append(int(i, 16))      # konverze na cisla
-
-
-
-        ##for i, j in enumerate(self.data):
-        ##  if i % 10 == 0:
-        ##    self.rgb += self.data[i + 1:]
-        ##  print(int(j, 16), i)
-        ##  #print(i)
-
-        #for i in range(0, len(self.data_int), 10):
-        #  tmp = []
-        #  for j in range(1, 10, 3):
-        #    #tmp.append(list(self.data_int[i + j:i + j + 3]))
-        #    tmp.append(tuple(self.data_int[i + j:i + j + 3]))
-
-        #  #self.rgb.append(self.data_int[i + 1:i + 10])
-        #  self.rgb.append(tmp)
-
+        #print(len(self.rgb))
         #print(self.rgb)
 
+        for i in range(struct.unpack('>I', self.ihdr_height)[0]):  # cyklus pro pocet radek -> zpracovani filtru
+          if self.rgb[i][0] == 0:
+            continue
+
+          elif self.rgb[i][0] == 1:
+            pass
+
+          elif self.rgb[i][0] == 2:
+            pass
+
+          elif self.rgb[i][0] == 3:
+            pass
+
+          elif self.rgb[i][0] == 4:
+
+            # projiti vsech pixelu obrazku:
+            #for k in range(struct.unpack('>I', self.ihdr_height)[0]):
+            #  print("[", end='')
+            #  for l in range(struct.unpack('>I', self.ihdr_width)[0]):
+            #    print(self.rgb[k][1][l], end=', ')
+            #  print("]")
 
 
-        # RGB-data obrázku jako seznam seznamů řádek,
-        #   v každé řádce co pixel, to trojce (R, G, B)
-        #self.rgb = []
+            for k in range(struct.unpack('>I', self.ihdr_height)[0]):
+              print("[", end='')
+              for l in range(struct.unpack('>I', self.ihdr_width)[0]):
+                print(self.rgb[k][1][l], end=', ')
+              print("]")
 
 
-      # cteni udelat v bloku with -> cteme dany pocet bytu
 
-      # RGB-data obrázku jako seznam seznamů řádek,
-      #   v každé řádce co pixel, to trojce (R, G, B)
-#      self.rgb = []
+              #print(self.rgb[k][1][0:struct.unpack('>I', self.ihdr_width)[0]])
+            #print("")
+            #print("")
+            #print("")
+            #print("")
+            #print(self.rgb)
+            return
+                #print(self.paeth(self.rgb[k - 1][l], self.rgb[k][l - 1], self.rgb[k - 1][l - 1]))
+                #self.rgb[i][1][k + l] = self.rgb[1][k + l] - self.paeth(self.rgb[1][k + l - 1], self.rgb[1][k - l], self.rgb[1][k - 1][l - 1])    # pixely jsou az o uroven niz !!
+
+
+        #  print("i: " + str(i))
+        #  print(self.rgb[i][0])
+
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+
+        #i = 0
+        #tmp = []
+        #while i < len(self.data):
+
+        #  if i % ((struct.unpack('>I', self.ihdr_width)[0] * 3) + 1) == 0:
+        #    tmp = []
+
+        #    print("filtr")
+        #    print(self.data[i])
+
+        #    if self.data[i] == 0:
+        #      i += 1
+        #      continue
+
+        #    elif self.data[i] == 1:
+        #      pass
+
+        #    elif self.data[i] == 2:
+        #      pass
+
+        #    elif self.data[i] == 3:
+        #      pass
+
+        #    elif self.data[i] == 4:
+        #      for k in range(struct.unpack('>I', self.ihdr_height)[0]):
+        #        for l in range(struct.unpack('>I', self.ihdr_width)[0]):
+        #          self.data[k][l] = self.data[k][l] - paeth(self.data[k - 1][l], self.data[k][l - 1], self.data[k - 1][l - 1])
+
+        #    i += 1
+        #      #pass
+
+
+        #  for j in range(0, struct.unpack('>I', self.ihdr_width)[0] * 3, 3):
+        ##    print(self.data[i + j: i + j + 3])
+        #    tmp.append(struct.unpack('>BBB', self.data[i + j: i + j + 3]))
+
+        ##  print("j: " + str(j))
+        ##  print("i: " + str(i))
+        #  i += j + 3
+
+        #  self.rgb.append(tmp)
+        #  #i += 1
+
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+# ------------------------------------------------------------------------------
+
+
+        #print(struct.unpack('>I', self.ihdr_width)[0])
+        #print(struct.unpack('>I', self.ihdr_height)[0])
+        #print(self.data)
+
+        #for i in range(struct.unpack('>I', self.ihdr_width)[0]):
+        #  for j in range(struct.unpack('>I', self.ihdr_height)[0]):
+        #tmp = list()
+
+        #for i in range((struct.unpack('>I', self.ihdr_width)[0] *  struct.unpack('>I', self.ihdr_width)[0] + 1) * 3, ):
+        #  print()
+
+          #if i % ((struct.unpack('>I', self.ihdr_width)[0] * 3) + 1) == 0:
+          #  continue
+
+          #tmp.append(self.data[i])
+          #if len(tmp) == 3:
+          #  print(tmp)
+          #  tmp = []
+
+
+        #for i in range(1, (struct.unpack('>I', self.ihdr_height)[0] * struct.unpack('>I', self.ihdr_width)[0] + 1) * 3, (struct.unpack('>I', self.ihdr_width)[0] * 3) + 1):
+        #  self.tmp = []
+
+
+        #  for j in range(0, 3 * struct.unpack('>I', self.ihdr_width)[0], 3):
+
+        ##    print(self.data[i + j: i + j + 3])
+
+        #    self.tmp.append(struct.unpack('>BBB', self.data[i + j:i + j + 3]))
+        #  self.rgb.append(self.tmp)
+
+
+        print(self.rgb)
+
 
