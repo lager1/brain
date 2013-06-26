@@ -249,7 +249,7 @@ class BrainLoller():
 
 
     # debug
-    return
+    #return
 
     # self.data obsahuje rozkódovaný zdrojový kód brainfucku..
     self.data = ''
@@ -257,9 +257,9 @@ class BrainLoller():
     while self.pos_x <= struct.unpack('>I', self.raw_data.ihdr_width)[0] and self.pos_y <= struct.unpack('>I', self.raw_data.ihdr_height)[0]:
 
       print(self.raw_data.rgb[self.pos_y][self.pos_x])
-      #print(self.data)
-      #print("pozice y: " + str(self.pos_y))
-      #print("pozice x: " + str(self.pos_x))
+      print(self.data)
+      print("pozice y: " + str(self.pos_y))
+      print("pozice x: " + str(self.pos_x))
 
       if self.raw_data.rgb[self.pos_y][self.pos_x] == (255, 0, 0):
         self.data += '>'
@@ -310,15 +310,13 @@ class BrainLoller():
 
 
     print(self.data)
-    exit
 
-    # ..který pak předhodíme interpretru
-    self.program = BrainFuck(self.data)
+    ## ..který pak předhodíme interpretru
+    #self.program = BrainFuck(self.data)
 
 # ------------------------------------------------------------------------------
 class BrainCopter():
   """Třída pro zpracování jazyka braincopter."""
-
 
   def __init__(self, filename):
     """Inicializace interpretru braincopteru."""
@@ -333,10 +331,84 @@ class BrainCopter():
   def convert(self, filename):
     """funkce pro konverzi brainCopteru na brainfuck"""
 
-    #with open(filename) as f:
-    #  data = f.read()
+    self.raw_data = image_png.PngReader(filename)
 
-    #print(data)
-    image_png.PngReader(filename)
+    # smery:
+    # 0 - vlevo
+    # 1 - dolu
+    # 2 - vpravo
+    # 3 - nahoru
 
+    #self.direction = 0
+    #self.pos_x = 0
+    #self.pos_y = 0
+
+    ##print(self.raw_data.rgb)
+
+    ## debug
+    #return
+
+
+    ## tady jeste treba konverze dat pomoci vzorce 
+    ## (65536 * R + 256 * G + B) % 11
+
+    ## self.data obsahuje rozkódovaný zdrojový kód brainfucku..
+    #self.data = ''
+
+    #while self.pos_x <= struct.unpack('>I', self.raw_data.ihdr_width)[0] and self.pos_y <= struct.unpack('>I', self.raw_data.ihdr_height)[0]:
+
+    #  print(self.raw_data.rgb[self.pos_y][self.pos_x])
+    #  #print(self.data)
+    #  #print("pozice y: " + str(self.pos_y))
+    #  #print("pozice x: " + str(self.pos_x))
+
+    #  if self.raw_data.rgb[self.pos_y][self.pos_x] == (255, 0, 0):
+    #    self.data += '>'
+
+    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (128, 0, 0):
+    #    self.data += '<'
+
+    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 255, 0):
+    #    self.data += '+'
+
+    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 128, 0):
+    #    self.data += '-'
+
+    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 0, 255):
+    #    self.data += '.'
+
+    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 0, 128):
+    #    self.data += ','
+
+    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (255, 255, 0):
+    #    self.data += '['
+
+    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (128, 128, 0):
+    #    self.data += ']'
+
+    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 255, 255):
+    #    print("vpravo")
+    #    self.direction += 1     # otoceni doprava
+    #    self.direction %= 4
+
+    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 128, 128):
+    #    print("vlevo")
+    #    self.direction -= 1     # otoceni doleva
+    #    self.direction %= 4
+
+    #  if self.direction == 0:
+    #    self.pos_x += 1
+
+    #  elif self.direction == 1:
+    #    self.pos_y += 1
+
+    #  elif self.direction == 2:
+    #    self.pos_x -= 1
+
+    #  elif self.direction == 3:
+    #    self.pos_y -= 1
+
+
+
+    #print(self.data)
 
