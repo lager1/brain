@@ -4,6 +4,7 @@
 # ------------------------------------------------------------------------------
 import struct
 import zlib
+import sys
 
 # ------------------------------------------------------------------------------
 class PNGWrongHeaderError(Exception):
@@ -131,6 +132,7 @@ class PngReader():
                 self.rgb.append(self.scanline)
 
             # filtry jsou pro jednotlive scanlines
+            print(self.rgb)
 
             for i in range(struct.unpack('>I', self.ihdr_height)[0]):  # cyklus pro pocet radek -> zpracovani filtru
                 if self.rgb[i][0] == 0:
@@ -178,8 +180,21 @@ class PngReader():
                 elif self.rgb[i][0] == 4:
                     for j in range(struct.unpack('>I', self.ihdr_width)[0]):
 
-                        for k in range(3):
-                            self.rgb[i][1][j][k] = ((self.rgb[i][1][j][k] + self.paeth(self.rgb[i][1][j - 1][k], self.rgb[i - 1][1][j][k], self.rgb[i - 1][1][j - 1][k])) & 0xff)
+                        if i < 1 and j < 1:
+                            for k in range(3):
+                                self.rgb[i][1][j][k] = ((self.rgb[i][1][j][k] + self.paeth(0, 0, 0)) & 0xff)
+
+                        elif j < 1:
+                            for k in range(3):
+                                self.rgb[i][1][j][k] = ((self.rgb[i][1][j][k] + self.paeth(0, self.rgb[i - 1][1][j][k], 0)) & 0xff)
+
+                        elif i < 1:
+                            for k in range(3):
+                                self.rgb[i][1][j][k] = ((self.rgb[i][1][j][k] + self.paeth(self.rgb[i][1][j - 1][k], 0, 0)) & 0xff)
+
+                        else:
+                            for k in range(3):
+                                self.rgb[i][1][j][k] = ((self.rgb[i][1][j][k] + self.paeth(self.rgb[i][1][j - 1][k], self.rgb[i - 1][1][j][k], self.rgb[i - 1][1][j - 1][k])) & 0xff)
 
                     self.pix.append(self.rgb[i][1])    # pridame do vysledku radek bez filtru
 
