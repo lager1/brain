@@ -208,7 +208,7 @@ class BrainLoller():
         while self.pos_x < struct.unpack('>I', self.raw_data.ihdr_width)[0] and self.pos_y < struct.unpack('>I', self.raw_data.ihdr_height)[0]:
 
             if self.pos_x < 0 or self.pos_y < 0:    # jsme mimo obrazek, konec zpracovani
-              break
+                break
 
             if self.raw_data.rgb[self.pos_y][self.pos_x] == (255, 0, 0):
                 self.data += '>'
@@ -292,14 +292,15 @@ class BrainCopter():
             for r, g, b in i:
                 self.tmp.append((65536 * r + 256 * g + b) % 11) # prevod na prikazy
 
-        self.converted.append(self.tmp)
+            self.converted.append(self.tmp)
 
         # self.data obsahuje rozkódovaný zdrojový kód brainfucku..
         self.data = ''
 
         while self.pos_x < struct.unpack('>I', self.raw_data.ihdr_width)[0] and self.pos_y < struct.unpack('>I', self.raw_data.ihdr_height)[0]:
+
             if self.pos_x < 0 or self.pos_y < 0:    # jsme mimo obrazek, konec zpracovani
-              break
+                break
 
             if self.converted[self.pos_y][self.pos_x] == 0:
                 self.data += '>'
