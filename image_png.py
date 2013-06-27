@@ -37,6 +37,15 @@ class PNGWrongCrcError(Exception):
     def __str__(self):
       return repr(self.value)
 
+# ------------------------------------------------------------------------------
+class PNGWrongCrcError(Exception):
+    """Výjimka oznamující, že zadaný soubor neexistuje nebo není obyčejný soubor."""
+
+    def __init__(self, value):
+      self.value = value
+
+    def __str__(self):
+      return repr(self.value)
 
 # ------------------------------------------------------------------------------
 class PngReader():
@@ -71,7 +80,7 @@ class PngReader():
 
 
         if not os.path.exists(filepath) or not os.path.isfile(filepath):   # soubor neexistuje
-            return
+            raise PNGWrongHeaderError("Zadaný soubor neexistuje nebo není obyčejný soubor.")
 
         with open(filepath, 'rb') as f:
             self.header = f.read(8)
