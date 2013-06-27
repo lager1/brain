@@ -5,7 +5,6 @@
 import os
 import sys
 import image_png
-import struct
 
 # ------------------------------------------------------------------------------
 class BrainFuck:
@@ -117,13 +116,6 @@ class BrainFuck:
         i = start
         while i < end:
 
-            #print("delka pameti: " + str(len(self.memory)))
-            #print("pamet: " + str(self.memory))
-            #print("aktualni index: " + str(i))
-            #print("aktualni znak: " + self.data[i])
-            #print("ukazatel: " + str(self.memory_pointer))
-            #print("----------------")
-
 # -----------------------------------
             if self.data[i] == '>':
                 self.memory_pointer += 1
@@ -231,21 +223,13 @@ class BrainLoller():
         self.pos_x = 0
         self.pos_y = 0
 
-        print(self.raw_data.rgb)
-
-
-        # debug
-        return
-
         # self.data obsahuje rozkódovaný zdrojový kód brainfucku..
         self.data = ''
 
         while self.pos_x < struct.unpack('>I', self.raw_data.ihdr_width)[0] and self.pos_y < struct.unpack('>I', self.raw_data.ihdr_height)[0]:
 
-            print(self.raw_data.rgb[self.pos_y][self.pos_x])
-            print(self.data)
-            #print("pozice y: " + str(self.pos_y))
-            #print("pozice x: " + str(self.pos_x))
+            if self.pos_x < 0 or self.pos_y < 0:    # jsme mimo obrazek, konec zpracovani
+              break
 
             if self.raw_data.rgb[self.pos_y][self.pos_x] == (255, 0, 0):
                 self.data += '>'
@@ -258,10 +242,6 @@ class BrainLoller():
 
             elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 128, 0):
                 self.data += '-'
-            #  print("tady")
-              # debug
-            #  if self.pos_x > 10:
-            #    return
 
             elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 0, 255):
                 self.data += '.'
@@ -276,12 +256,10 @@ class BrainLoller():
                 self.data += ']'
 
             elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 255, 255):
-                print("vpravo")
                 self.direction += 1     # otoceni doprava
                 self.direction %= 4
 
             elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 128, 128):
-                print("vlevo")
                 self.direction -= 1     # otoceni doleva
                 self.direction %= 4
 
@@ -297,10 +275,8 @@ class BrainLoller():
             elif self.direction == 3:
                 self.pos_y -= 1
 
-        print(self.data)
-
-        ## ..který pak předhodíme interpretru
-        #self.program = BrainFuck(self.data)
+        # ..který pak předhodíme interpretru
+        self.program = BrainFuck(self.data)
 
 # ------------------------------------------------------------------------------
 class BrainCopter():
@@ -343,6 +319,8 @@ class BrainCopter():
         self.data = ''
 
         while self.pos_x < struct.unpack('>I', self.raw_data.ihdr_width)[0] and self.pos_y < struct.unpack('>I', self.raw_data.ihdr_height)[0]:
+            if self.pos_x < 0 or self.pos_y < 0:    # jsme mimo obrazek, konec zpracovani
+              break
 
             if self.converted[self.pos_y][self.pos_x] == 0:
                 self.data += '>'

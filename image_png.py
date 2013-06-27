@@ -4,7 +4,6 @@
 # ------------------------------------------------------------------------------
 import struct
 import zlib
-import sys
 
 # ------------------------------------------------------------------------------
 class PNGWrongHeaderError(Exception):
@@ -132,7 +131,6 @@ class PngReader():
                 self.rgb.append(self.scanline)
 
             # filtry jsou pro jednotlive scanlines
-            print(self.rgb)
 
             for i in range(struct.unpack('>I', self.ihdr_height)[0]):  # cyklus pro pocet radek -> zpracovani filtru
                 if self.rgb[i][0] == 0:
