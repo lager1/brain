@@ -38,9 +38,9 @@ class BrainFuck:
       #
       # pro potřeby testů
       #
-      def get_memory(self):
-          # Nezapomeňte upravit získání návratové hodnoty podle vaší implementace!
-          return bytearray(self.memory) # vracime bytearray
+    def get_memory(self):
+        # Nezapomeňte upravit získání návratové hodnoty podle vaší implementace!
+        return bytearray(self.memory) # vracime bytearray
 
 
 # ------------------------------------------------------------------------------
@@ -60,8 +60,8 @@ class BrainFuck:
                 i = self.analyze(i + 1) + 1    # posuneme hledani za nalezenou zavorku
                 continue
 
-              if i >= delka:
-                return delka
+            if i >= delka:
+              return delka
 
             if self.data[i] == "]":
                 self.brackets[start - 1] = i
@@ -339,7 +339,7 @@ class BrainCopter():
             for r, g, b in i:
                 self.tmp.append((65536 * r + 256 * g + b) % 11) # prevod na prikazy
 
-          self.converted.append(self.tmp)
+        self.converted.append(self.tmp)
 
         # self.data obsahuje rozkódovaný zdrojový kód brainfucku..
         self.data = ''
