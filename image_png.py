@@ -4,6 +4,7 @@
 # ------------------------------------------------------------------------------
 import struct
 import zlib
+import os
 
 # ------------------------------------------------------------------------------
 class PNGWrongHeaderError(Exception):
@@ -63,8 +64,14 @@ class PngReader():
 
         # RGB-data obrázku jako seznam seznamů řádek,
         #   v každé řádce co pixel, to trojce (R, G, B)
+        # zpracovani obrazku primo na radce by bylo mozne, ale pri testovani jsem zjistil odlisnosti v samotnych datech, takze jsem to nechal pouze pro soubory
+
         self.rgb = []
         self.pix = []     # pouze pixely - pomocna promenna
+
+
+        if not os.path.exists(filepath) or not os.path.isfile(filepath):   # soubor neexistuje
+            return
 
         with open(filepath, 'rb') as f:
             self.header = f.read(8)
@@ -75,9 +82,6 @@ class PngReader():
             self.ihdr_len = f.read(4)    # delka chunku
             self.ihdr_type = f.read(4)   # typ chunku
 
-            if self.ihdr_type != b'IHDR':
-                raise PNGNotImplementedError("Strukturu zadaného souboru není možné zpracovat.")
-
             self.ihdr_data = f.read(13)  # 13 bajtu dat
 
             self.ihdr_width = self.ihdr_data[:4]  # vyska obrazku v pixelech
@@ -86,7 +90,10 @@ class PngReader():
             self.ihdr_col_type = self.ihdr_data[9:10]   # barvovy typ
             self.ihdr_compression = self.ihdr_data[10:11]   # metoda komprese
             self.ihdr_filter = self.ihdr_data[11:12]        # metoda filtrace
-            self.ihdr_interlace = self.ihdr_data[12:13]     # metoda prokladani , musi byt 0 !
+            self.ihdr_interlace = self.ihdr_data[12:13]     # metoda prokladani
+
+            if struct.unpack('>BBBBB', self.ihdr_data[8:13]) != (8, 2, 0, 0, 0):
+                raise PNGNotImplementedError("Strukturu zadaného souboru není možné zpracovat.")
 
             self.ihdr_crc = f.read(4)     # kontrolni soucet
 
@@ -98,9 +105,6 @@ class PngReader():
 
             while self.chunk_len != b'\x00\x00\x00\x00':     # cteni vseho az do IEND
                 self.chunk_type = f.read(4)    # typ chunku
-
-                if self.chunk_type != b'IDAT':
-                    raise PNGNotImplementedError("Strukturu zadaného souboru není možné zpracovat.")
 
                 self.chunk_data = f.read(struct.unpack('>I', self.chunk_len)[0])  # precteni vsech dat chunku
                 self.idat += self.chunk_data
