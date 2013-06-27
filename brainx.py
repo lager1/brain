@@ -5,6 +5,7 @@
 import os
 import sys
 import image_png
+import struct
 
 # ------------------------------------------------------------------------------
 class BrainFuck:
@@ -95,7 +96,7 @@ class BrainFuck:
 
 # ------------------------------------------------------------------------------
     def dataCheck(self):
-        """Kontrola spravne zadaneho souboru s daty nebo spravneho kodu primo na radce"""
+        """Kontrola spravne zadaneho souboru s daty, pripadne je kod primo na radce"""
 
         if os.path.exists(self.data) and os.path.isfile(self.data):   # soubor existuje
             with open(self.data, 'r') as f:
@@ -122,12 +123,6 @@ class BrainFuck:
                 if self.memory_pointer == len(self.memory):
                     self.memory.append(0)   # rozsireni pameti
                 i += 1
-
-                while self.data[i] == '>':
-                    self.memory_pointer += 1
-                    if self.memory_pointer == len(self.memory):
-                        self.memory.append(0)   # rozsireni pameti
-                    i += 1
                 continue
 
 # -----------------------------------
@@ -135,34 +130,18 @@ class BrainFuck:
                 if self.memory_pointer != 0:
                     self.memory_pointer -= 1
                 i += 1
-
-                while self.data[i] == '<':
-                    if self.memory_pointer != 0:
-                        self.memory_pointer -= 1
-                    i += 1
                 continue
 
 # -----------------------------------
             elif self.data[i] == '+':
                 self.memory[self.memory_pointer] += 1   # inkrementace aktualni pametove bunky
                 i += 1
-
-                while self.data[i] == '+':
-                    self.memory[self.memory_pointer] += 1   # inkrementace aktualni pametove bunky
-                    i += 1
-
-                self.memory[self.memory_pointer] %= 255
                 continue
 
 # -----------------------------------
             elif self.data[i] == '-':
                 self.memory[self.memory_pointer] -= 1   # dekrementace aktualni pametove bunky
                 i += 1
-
-                while self.data[i] == '-':
-                    self.memory[self.memory_pointer] -= 1   # inkrementace aktualni pametove bunky
-                    i += 1
-
                 self.memory[self.memory_pointer] %= 255
                 continue
 
