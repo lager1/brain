@@ -145,12 +145,10 @@ class BrainFuck:
                 i += 1
 
                 while self.data[i] == '<':
-                    self.memory_pointer -= 1
+                    if self.memory_pointer != 0:
+                        self.memory_pointer -= 1
                     i += 1
                 continue
-
-              # tady dodelat kontrolu ze nelze jit doleva, pokud jsme na zacatku pasky
-              # asi neni vylozene nutne
 
 # -----------------------------------
             elif self.data[i] == '+':
@@ -237,7 +235,7 @@ class BrainLoller():
 
 
         # debug
-        #return
+        return
 
         # self.data obsahuje rozkódovaný zdrojový kód brainfucku..
         self.data = ''
