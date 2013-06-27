@@ -69,13 +69,15 @@ class BrainFuck:
         continue
 
         if i >= delka:
-          return
+          return delka
 
       if self.data[i] == "]":
         self.brackets[start - 1] = i
         return i
 
       i += 1
+
+    return delka
 
 # ------------------------------------------------------------------------------
   def stripData(self):
@@ -245,7 +247,7 @@ class BrainLoller():
     self.pos_x = 0
     self.pos_y = 0
 
-    #print(self.raw_data.rgb)
+    print(self.raw_data.rgb)
 
 
     # debug
@@ -254,12 +256,12 @@ class BrainLoller():
     # self.data obsahuje rozkódovaný zdrojový kód brainfucku..
     self.data = ''
 
-    while self.pos_x <= struct.unpack('>I', self.raw_data.ihdr_width)[0] and self.pos_y <= struct.unpack('>I', self.raw_data.ihdr_height)[0]:
+    while self.pos_x < struct.unpack('>I', self.raw_data.ihdr_width)[0] and self.pos_y < struct.unpack('>I', self.raw_data.ihdr_height)[0]:
 
       print(self.raw_data.rgb[self.pos_y][self.pos_x])
-      print(self.data)
-      print("pozice y: " + str(self.pos_y))
-      print("pozice x: " + str(self.pos_x))
+      #print(self.data)
+      #print("pozice y: " + str(self.pos_y))
+      #print("pozice x: " + str(self.pos_x))
 
       if self.raw_data.rgb[self.pos_y][self.pos_x] == (255, 0, 0):
         self.data += '>'
@@ -272,6 +274,10 @@ class BrainLoller():
 
       elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 128, 0):
         self.data += '-'
+      #  print("tady")
+        # debug
+      #  if self.pos_x > 10:
+      #    return
 
       elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 0, 255):
         self.data += '.'
@@ -324,7 +330,7 @@ class BrainCopter():
     # self.data obsahuje rozkódovaný zdrojový kód brainfucku..
     self.data = self.convert(filename)
     # ..který pak předhodíme interpretru
-    #self.program = BrainFuck(self.data)
+    self.program = BrainFuck(self.data)
 
 
 # ------------------------------------------------------------------------------
@@ -339,76 +345,78 @@ class BrainCopter():
     # 2 - vpravo
     # 3 - nahoru
 
-    #self.direction = 0
-    #self.pos_x = 0
-    #self.pos_y = 0
+    self.direction = 0
+    self.pos_x = 0
+    self.pos_y = 0
 
-    ##print(self.raw_data.rgb)
+    #print(self.raw_data.rgb)
 
-    ## debug
-    #return
+    self.converted = []
 
+    for i in self.raw_data.rgb:
+      self.tmp = []
+      for r, g, b in i:
+        self.tmp.append((65536 * r + 256 * g + b) % 11) # prevod na prikazy
 
-    ## tady jeste treba konverze dat pomoci vzorce 
-    ## (65536 * R + 256 * G + B) % 11
+      self.converted.append(self.tmp)
 
-    ## self.data obsahuje rozkódovaný zdrojový kód brainfucku..
-    #self.data = ''
+    #print(self.converted)
 
-    #while self.pos_x <= struct.unpack('>I', self.raw_data.ihdr_width)[0] and self.pos_y <= struct.unpack('>I', self.raw_data.ihdr_height)[0]:
+    # self.data obsahuje rozkódovaný zdrojový kód brainfucku..
+    self.data = ''
 
-    #  print(self.raw_data.rgb[self.pos_y][self.pos_x])
-    #  #print(self.data)
-    #  #print("pozice y: " + str(self.pos_y))
-    #  #print("pozice x: " + str(self.pos_x))
+    while self.pos_x < struct.unpack('>I', self.raw_data.ihdr_width)[0] and self.pos_y < struct.unpack('>I', self.raw_data.ihdr_height)[0]:
 
-    #  if self.raw_data.rgb[self.pos_y][self.pos_x] == (255, 0, 0):
-    #    self.data += '>'
+      #print(self.raw_data.rgb[self.pos_y][self.pos_x])
+      #print(self.data)
+      #print("pozice y: " + str(self.pos_y))
+      #print("pozice x: " + str(self.pos_x))
 
-    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (128, 0, 0):
-    #    self.data += '<'
+      if self.converted[self.pos_y][self.pos_x] == 0:
+        self.data += '>'
 
-    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 255, 0):
-    #    self.data += '+'
+      elif self.converted[self.pos_y][self.pos_x] == 1:
+        self.data += '<'
 
-    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 128, 0):
-    #    self.data += '-'
+      elif self.converted[self.pos_y][self.pos_x] == 2:
+        self.data += '+'
 
-    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 0, 255):
-    #    self.data += '.'
+      elif self.converted[self.pos_y][self.pos_x] == 3:
+        self.data += '-'
 
-    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 0, 128):
-    #    self.data += ','
+      elif self.converted[self.pos_y][self.pos_x] == 4:
+        self.data += '.'
 
-    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (255, 255, 0):
-    #    self.data += '['
+      elif self.converted[self.pos_y][self.pos_x] == 5:
+        self.data += ','
 
-    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (128, 128, 0):
-    #    self.data += ']'
+      elif self.converted[self.pos_y][self.pos_x] == 6:
+        self.data += '['
 
-    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 255, 255):
-    #    print("vpravo")
-    #    self.direction += 1     # otoceni doprava
-    #    self.direction %= 4
+      elif self.converted[self.pos_y][self.pos_x] == 7:
+        self.data += ']'
 
-    #  elif self.raw_data.rgb[self.pos_y][self.pos_x] == (0, 128, 128):
-    #    print("vlevo")
-    #    self.direction -= 1     # otoceni doleva
-    #    self.direction %= 4
+      elif self.converted[self.pos_y][self.pos_x] == 8:
+        #print("vpravo")
+        self.direction += 1     # otoceni doprava
+        self.direction %= 4
 
-    #  if self.direction == 0:
-    #    self.pos_x += 1
+      elif self.converted[self.pos_y][self.pos_x] == 9:
+        #print("vlevo")
+        self.direction -= 1     # otoceni doleva
+        self.direction %= 4
 
-    #  elif self.direction == 1:
-    #    self.pos_y += 1
+      if self.direction == 0:
+        self.pos_x += 1
 
-    #  elif self.direction == 2:
-    #    self.pos_x -= 1
+      elif self.direction == 1:
+        self.pos_y += 1
 
-    #  elif self.direction == 3:
-    #    self.pos_y -= 1
+      elif self.direction == 2:
+        self.pos_x -= 1
 
+      elif self.direction == 3:
+        self.pos_y -= 1
 
-
-    #print(self.data)
+    return self.data
 
